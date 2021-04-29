@@ -47,7 +47,7 @@ void ft_cd(char **line)
 		error_cd_bad_args();
 		return;
 	}
-	if (chdir(line[1]))
+	if (chdir(line[1])) //если успешно перешел вернет ноль так что заходим внутрь при неудаче
 		error_cd_cannot_change(line[1]);
 }
 
@@ -74,35 +74,35 @@ int main(int argc, char **argv, char **env)
 	int after_line = 0;
 	int opened = 0;
 
-	if (argc > 1)
+	if (argc > 1) // иначе ретерн
 	{
 		while(i < argc)
 		{
 			if (!(strcmp(argv[i], ";")) || !(strcmp(argv[i], "|"))) {
-				i++;
+				i++; // пропустить
 				continue;
 			}
-			len = count_len(argv, i);
-			line = malloc(sizeof(char *) * (len + 1));
+			len = count_len(argv, i); // колво аргументов в нынешней команде
+			line = malloc(sizeof(char *) * (len + 1)); //будущий массив указателей на текущие аргументы
 			if (!line)
-				exit_fatal();
-			line[len] = NULL;
+				exit_fatal();// проверили малок
+			line[len] = NULL; // ограничить
 			for (int m = 0; m < len; m++)
 			{
-				line[m] = argv[i];
+				line[m] = argv[i]; //заполнили аргв
 				i++;
 			}
 			if(!argv[i])
 				after_line = END;
-			if (argv[i] && (strcmp(argv[i], ";") == 0))
+			if (argv[i] && (strcmp(argv[i], ";") == 0)) //если стрсмп увидит налл он сегнется!
 				after_line = SEMI;
 			else if (argv[i] && (strcmp(argv[i], "|") == 0))
 				after_line = PIPE;
 
-			if (!(strcmp(line[0], "cd")))
+			if (!(strcmp(line[0], "cd"))) //если 1ый арг сд
 			{
 				ft_cd(line);
-				continue;
+				continue; //новый цикл
 			}
 			
 			pid_t pid;
@@ -111,7 +111,7 @@ int main(int argc, char **argv, char **env)
 			int save1;
 			int fd[2];
 
-			if (opened)
+			if (opened) // пропускаем в первый раз 100%, зайдем если предыдущий - пайп
 			{
 				save0 = dup(0);
 				dup2(fd[0], 0);
@@ -121,20 +121,20 @@ int main(int argc, char **argv, char **env)
 			{
 				if (pipe(fd))
 					exit_fatal();
-				save1 = dup(1);
-				dup2(fd[1], 1);
-				close(fd[1]);
+				save1 = dup(1); // тут save1 мы сохранили 1
+				dup2(fd[1], 1); // теперь 1 это fd[1], сам fd[1] дублирован но не нужен
+				close(fd[1]); // поэтому здесь его закрываем
 			}
 
 			pid = fork();
 			if (pid < 0) exit_fatal();
-			else if (pid == 0)
+			else if (pid == 0) // ребенок
 			{
-				if (execve(line[0], line, env))
+				if (execve(line[0], line, env)) //подменяет исходный код
 					error_cannot_exec(line[0]);
 				exit(0);
 			}
-			else
+			else // родитель ждет
 				waitpid(pid, &status, 0);
 
 			if (opened)
@@ -146,11 +146,11 @@ int main(int argc, char **argv, char **env)
 
 			if (after_line == PIPE)
 			{
-				dup2(save1, 1);
+				dup2(save1, 1); // поставить все на место что раздолбали в 120-.. строках
 				close(save1);
 				opened = 1;
 			}
-			free(line);
+			free(line); //каждая отдельная команда
 		}
 	}
 	return 0;
