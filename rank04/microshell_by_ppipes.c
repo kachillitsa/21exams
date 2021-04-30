@@ -82,8 +82,8 @@ int main(int argc, char **argv, char **env)
 				i++; // пропустить
 				continue;
 			}
-			len = count_len(argv, i); // колво аргументов в нынешней команде
-			line = malloc(sizeof(char *) * (len + 1)); //будущий массив указателей на текущие аргументы
+			len = count_len(argv, i); // колво аргументов в команде
+			line = malloc(sizeof(char *) * (len + 1)); //будущий массив указателей на аргументы
 			if (!line)
 				exit_fatal();// проверили малок
 			line[len] = NULL; // ограничить
@@ -98,7 +98,6 @@ int main(int argc, char **argv, char **env)
 				after_line = SEMI;
 			else if (argv[i] && (strcmp(argv[i], "|") == 0))
 				after_line = PIPE;
-
 			if (!(strcmp(line[0], "cd"))) //если 1ый арг сд
 			{
 				ft_cd(line);
