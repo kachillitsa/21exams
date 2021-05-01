@@ -1,13 +1,14 @@
+#include <stdlib.h>
+#include <unistd.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/types.h>
-// #include <unistd.h>
-// #include <stdlib.h>
+#include <sys/wait.h>
 
-int		ft_strlen(char *s)
+int		ft_strlen(char *str)
 {
 	int i = 0;
-	while (s[i] != '\0')
+	while (str[i] != '\0')
 		i++;
 	return i;
 }
@@ -17,17 +18,17 @@ void	err_args()
 	write(2, "error: cd: bad arguments\n", 26);
 }
 
-void	err_path(char *line)
+void	err_path(char *str)
 {
 	write(2, "error: cd: cannot change directory to ", 39);
-	write(2, line, strlen(line));
+	write(2, str, strlen(str));
 	write(2, "\n", 1);
 }
 
-void err_exec(char *line)
+void err_exec(char *str)
 {
 	write(2, "error: cannot execute ", 23);
-	write(2, line, ft_strlen(line));
+	write(2, str, ft_strlen(str));
 	write(2, "\n", 1);
 }
 
@@ -38,13 +39,10 @@ void	exit_fatal(void)
 }
 
 #define PIPE 1
-#define END 2
-#define SEMI 3
-
 
 int		count_len(char **av, int i)
 {
-	int len;
+	int len = 0;
 	while (av[i] && strcmp(av[i], "|") && strcmp(av[i], ";"))
 	{
 		i++;
@@ -79,7 +77,7 @@ int		main(int ac, char **av, char **env)
 	}
 	while (i < ac)
 	{
-		while (!(strcmp(av[i], "|")) || !(strcmp(av[i], ";")))
+		if (!(strcmp(av[i], "|")) || !(strcmp(av[i], ";")))
 		{
 			i++;
 			continue;
@@ -94,11 +92,8 @@ int		main(int ac, char **av, char **env)
 			line[m] = av[i];
 			i++;
 		}
-		if(!av[i])
-			after_line = END;
-		if (av[i] && strcmp(av[i], ";") == 0)
-			after_line = SEMI;
-		if (av[i] && strcmp(av[i], "|") == 0)
+
+		if (av[i] && (strcmp(av[i], "|") == 0))
 			after_line = PIPE;
 		if (!(strcmp(line[0], "cd")))
 		{
@@ -110,12 +105,12 @@ int		main(int ac, char **av, char **env)
 		pid_t pid;
 		int state;
 		int fd[2];
-		int buf;
-		int buf2;
+		int save0;
+		int save1;
 
 		if (op)
 		{
-			buf = dup(0);
+			save0 = dup(0);
 			dup2(fd[0], 0);
 			close(fd[0]);
 		}
@@ -124,8 +119,8 @@ int		main(int ac, char **av, char **env)
 		{
 			if(pipe(fd))
 				exit_fatal();
-			buf2 = dub(1);
-			dub2(fd[1], 1);
+			save1 = dup(1);
+			dup2(fd[1], 1);
 			close(fd[1]);
 		}
 
@@ -142,14 +137,14 @@ int		main(int ac, char **av, char **env)
 			waitpid(pid, &state, 0);
 		if(op)
 		{
-			dub2(buf, 0);
-			close(buf);
+			dup2(save0, 0);
+			close(save0);
 			op = 0;
 		}
 		if (after_line == PIPE)
 		{
-			dub2(buf2, 1);
-			close(buf2);
+			dup2(save1, 1);
+			close(save1);
 			op = 1;
 		}
 		free(line);
