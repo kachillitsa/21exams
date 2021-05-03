@@ -40,9 +40,7 @@ void exit_fatal(void)
 
 void	ft_cd(char **line)
 {
-	int i =0;
-	while (line[i]) i++;
-	if (i != 2)
+	if (ft_strlen(*line) != 2)
 	{
 		error_cd_bad_args();
 		return;
@@ -50,8 +48,6 @@ void	ft_cd(char **line)
 	if (chdir(line[1]))
 		error_cd_cannot_change(line[1]);
 }
-
-
 
 int count_len(char **str, int i)
 {
@@ -64,11 +60,8 @@ int count_len(char **str, int i)
 	return len;
 }
 
-#define END 2
 #define PIPE 1
-#define SEMI 3
-/*#define PIPE 1
-#define NOTPIPE 2*/
+#define NOTPIPE 2
 
 int		main(int ac, char **av, char **env)
 {
@@ -82,7 +75,7 @@ int		main(int ac, char **av, char **env)
 		return 0;
 	while (i < ac)
 	{
-		if (!(strcmp(av[i], "|")) || !(strcmp(av[i], ":"))) { //!strcmp means equal returns 0
+		if (!(strcmp(av[i], "|")) || !(strcmp(av[i], ";"))) { //!strcmp means equal returns 0
 			i++;
 			continue;
 		}
@@ -96,31 +89,20 @@ int		main(int ac, char **av, char **env)
 			line[m] = av[i];
 			i++;
 		}
-		printf("!!!!!!! %d\n", len);
-		if(!av[i])
-			afterline = END;
-		if (av[i] && (strcmp(av[i], ";") == 0)) //если стрсмп увидит налл он сегнется!
-			afterline = SEMI;
-		else if (av[i] && (strcmp(av[i], "|") == 0))
-			afterline = PIPE;
-		/*if (av[i] && (strcmp(av[i], "|") == 0))
+		if (av[i] && (strcmp(av[i], "|") == 0))
 			afterline = PIPE;
 		else
-			afterline = NOTPIPE;*/
+			afterline = NOTPIPE;
 		if (!(strcmp(line[0], "cd")))
 		{
 			ft_cd(line);
 			continue;
 		}
-
-
-
 		pid_t pid;
 		int stat;
 		int save0;
 		int save1;
 		int fd[2];
-
 		if(op)
 		{
 			save0 = dup(0);
@@ -135,7 +117,6 @@ int		main(int ac, char **av, char **env)
 			dup2(fd[1], 1);
 			close(fd[1]);
 		}
-
 		pid = fork();
 		if(pid < 0) exit_fatal();
 		else if (pid == 0) // baby
@@ -146,14 +127,12 @@ int		main(int ac, char **av, char **env)
 		}
 		else
 			waitpid(pid, &stat, 0);
-
 		if(op)
 		{
 			dup2(save0, 0);
 			close(save0);
 			op = 0;
 		}
-
 		if (afterline == PIPE)
 		{
 			dup2(save1, 1);
@@ -161,7 +140,6 @@ int		main(int ac, char **av, char **env)
 			op = 1;
 		}
 		free(line);
-
 	}
 	return 0;
 }
