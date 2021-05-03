@@ -121,7 +121,7 @@ int main(int argc, char **argv, char **env)
 				if (pipe(fd))
 					exit_fatal();
 				save1 = dup(1); // тут save1 мы сохранили 1
-				dup2(fd[1], 1); // теперь 1 это fd[1], сам fd[1] дублирован но не нужен
+				dup2(fd[1], 1); // теперь 1 это fd[1], сам fd[1] дублирован но не нужен int dup2(int oldfd, int newfd);
 				close(fd[1]); // поэтому здесь его закрываем
 			}
 
