@@ -71,6 +71,8 @@ int		main(int ac, char **av, char **env)
 	int		len = 0;
 	char	**line = NULL;
 	int		after_line = 0;
+	int		op = 0;
+
 	if (ac <= 1)
 	{
 		return(0);
@@ -95,13 +97,14 @@ int		main(int ac, char **av, char **env)
 
 		if (av[i] && (strcmp(av[i], "|") == 0))
 			after_line = PIPE;
+		else
+			after_line = 2;
 		if (!(strcmp(line[0], "cd")))
 		{
 			ft_cd(line);
 			continue;
 		}
 	// ____________________PART TWO
-		int op = 0;
 		pid_t pid;
 		int state;
 		int fd[2];
