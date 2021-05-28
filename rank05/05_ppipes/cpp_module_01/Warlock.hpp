@@ -39,11 +39,13 @@ public:
 		std::cout << this->getName() << ": This looks like another boring day."
 		<< std::endl;
 	}
-
 	void introduce(void) const {
 		std::cout << this->getName() << ": I am " << this->getName() << ", "
 		<< this->getTitle() << "!" << std::endl;
 	}
+
+
+
 
 
 	void learnSpell(ASpell *spell) {
@@ -56,8 +58,6 @@ public:
 		book.push_back(spell->clone());
 	}
 
-
-
 	void launchSpell(std::string spellname, ATarget &target) {
 		for(std::vector<ASpell *>::iterator it = book.begin(); it != book.end(); it++)
 		{
@@ -68,7 +68,6 @@ public:
 			}
 		}
 	}
-
 
 	void forgetSpell(std::string spellname) {
 		for(std::vector<ASpell *>::iterator it = book.begin(); it != book.end(); it++)

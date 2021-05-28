@@ -26,6 +26,8 @@ public:
 	void					setTitle(std::string title) { _title = title; }
 	void					introduce() const { PRINT(_name << ": I am " << _name << ", " << _title << "!") }
 
+
+
 	void		learnSpell(ASpell * spell)
 	{
 		if (!spell)
