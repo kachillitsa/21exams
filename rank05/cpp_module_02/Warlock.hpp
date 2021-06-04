@@ -5,12 +5,14 @@
 #include <vector>
 #include "ATarget.hpp"
 #include "ASpell.hpp"
+#include "SpellBook.hpp"
 
+class SpellBook;
 class Warlock {
 private:
     std::string _name;
     std::string _title;
-    std::vector<ASpell *> _book;
+    SpellBook _book;
     Warlock &operator=(Warlock const &src);
     Warlock(Warlock &src);
     Warlock();
@@ -31,31 +33,16 @@ public:
     void    learnSpell(ASpell *spell) {
         if (!spell)
             return;
-        for (std::vector<ASpell *>::iterator it = _book.begin(); it != _book.end(); it++) {
-            if ((*it) == spell)
-                return;
-        }
-        _book.push_back(spell->clone());
+        _book.learnSpell(spell);
         return;
     }
 
         void    forgetSpell(std::string const &spell) {
-        for (std::vector<ASpell *>::iterator it = _book.begin(); it != _book.end(); it++) {
-            if ((*it)->getName() == spell) {
-                delete (*it);
-                _book.erase(it);
-                return;
-            }
-        }
+        _book.forgetSpell(spell);
         return;
     }
         void    launchSpell(std::string const &spell, ATarget &tar) {
-        for (std::vector<ASpell *>::iterator it = _book.begin(); it != _book.end(); it++) {
-            if ((*it)->getName() == spell) {
-                (*it)->launch(tar);
-                return;
-            }
-        }
+        _book.createSpell(spell)->launch(tar);
         return;
     }
 };
