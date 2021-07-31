@@ -21,7 +21,7 @@ char buf_for_read[42*4096], buf_str[42*4096], buf_for_write[42*4096+42];
 void send_all(int except_sock) {
     int len = strlen(buf_for_write);
     for (int sel_sock = 0; sel_sock <= max_sock; sel_sock++)
-        if (FD_ISSET(sel_sock, &ready_for_write) && sel_sock != except_sock) {
+        if (FD_ISSET(sel_sock, &ready_for_write) && sel_sock != except_sock) { // FD_ISSET чекает есть ли sel_sock среди ready_for_write
             send(sel_sock, buf_for_write, len, 0);
         }
 }
