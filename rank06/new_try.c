@@ -6,16 +6,15 @@
 #include <netinet/in.h>
 #include <string.h>
 
-void fatal_error()
-{
-    write(2, "Fatal error\n", 12);
-    exit(1);
-}
-
 // 3 инта, фд_сета, чара
-int sock_id[65536], max_sock = 0, next_id = 0;
-fd_set active_socks, sock_read, sock_write;
-char buf_for_read[42*4096], buf_str[42*4096], buf_for_write[42*4096+42];
+int		sock_id[65536], next_id = 0, max_sock = 0;
+fd_set	active_socks, sock_read, sock_write;
+char	buf_str[42*4096], buf_read[42*4096], buf_write[42*4096+42];
+
+void fatal_error() {
+	write(2, "Fatal error\n", 12);
+	exit(1);
+}
 
 int		main(int ac, char **av) {
 	// 1. проверить аргументы
@@ -24,10 +23,10 @@ int		main(int ac, char **av) {
 		exit(1);
 	}
 
-	// 2. задать порт
+	// 2. задать порт + (void)
 	int port = atoi(av[1]); (void) port;
 
-	// 3. обнулить
+	// 3. обнулить sock_id и active_socks
 	bzero(&sock_id, sizeof(sock_id)); //заполнить пространство 0
 	FD_ZERO(&active_socks); // initializes a descriptor set fdset to the null set
 
