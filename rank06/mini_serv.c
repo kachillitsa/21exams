@@ -35,7 +35,7 @@ int main(int ac, char **av) {
 	max_sock = sockfd;
 	FD_SET(sockfd, &sfd_act);
 	struct sockaddr_in servaddr;										//58
-	socklen_t addr_len = sizeof(servaddr);								// задать addr_len
+	socklen_t len = sizeof(servaddr);								// задать len
 	servaddr.sin_family = AF_INET;										//71-73 (поменяй htons)
 	servaddr.sin_addr.s_addr = htonl(2130706433); //127.0.0.1
 	servaddr.sin_port = htons(atoi(av[1])); 
@@ -49,7 +49,7 @@ int main(int ac, char **av) {
 			continue ;
 		for (int sel_sock = 0; sel_sock <= max_sock; sel_sock++) {			// листаем сокеты от 0 до max_sock
 			if (FD_ISSET(sel_sock, &sfd_read) && sel_sock == sockfd) {		// если кто-то пришел
-				int client_sock = accept(sockfd, (struct sockaddr *)&servaddr, &addr_len);
+				int client_sock = accept(sockfd, (struct sockaddr *)&servaddr, &len);
 				if (client_sock < 0)
 					continue;
 				max_sock = (client_sock > max_sock) ? client_sock : max_sock;
