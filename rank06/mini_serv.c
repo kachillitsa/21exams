@@ -35,7 +35,7 @@ int main(int ac, char **av) {
 	max_sock = sockfd;
 	FD_SET(sockfd, &sfd_act);
 	struct sockaddr_in servaddr;										//58
-	socklen_t len = sizeof(servaddr);								// задать len
+	socklen_t len = sizeof(servaddr);									// задать len
 	servaddr.sin_family = AF_INET;										//71-73 (поменяй htons)
 	servaddr.sin_addr.s_addr = htonl(2130706433); //127.0.0.1
 	servaddr.sin_port = htons(atoi(av[1])); 
