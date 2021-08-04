@@ -39,7 +39,7 @@ int main(int ac, char **av) {
 	servaddr.sin_family = AF_INET;										//71-73 (поменяй htons)
 	servaddr.sin_addr.s_addr = htonl(2130706433); //127.0.0.1
 	servaddr.sin_port = htons(atoi(av[1])); 
-	if (((sockfd, (const struct sockaddr *)&servaddr, sizeof(servaddr))) < 0)	//76 и 82, проверка < 0 + listen значение SOMAXCONN
+	if ((bind(sockfd, (const struct sockaddr *)&servaddr, sizeof(servaddr))) < 0)	//76 и 82, проверка < 0 + listen значение SOMAXCONN
 		fatal_error();
 	if (listen(sockfd, SOMAXCONN) < 0)
 		fatal_error();
