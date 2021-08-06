@@ -6,7 +6,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
-int		sock_id[42*4242], next_id = 0, max_sock = 0;
+int		sock_id[42*4056], next_id = 0, max_sock = 0;
 fd_set	sfd_act, sfd_read, sfd_write;
 char	buf_str[42*4242], buf_read[42*4242], buf_write[42*4242+42];
 
@@ -52,7 +52,7 @@ int main(int ac, char **av) {
 				int client_sock = accept(sockfd, (struct sockaddr *)&servaddr, &len); //87 но (struct sockaddr *)&servaddr
 				if (client_sock < 0)
 					continue;
-				max_sock = (client_sock > max_sock) ? client_sock : max_sock;
+				max_sock = (client_sock > max_sock) ? client_sock : max_sock;	// может не быть макисмальным, если раньше удалял другой
 				sock_id[client_sock] = next_id++;
 				FD_SET(client_sock, &sfd_act);
 				sprintf(buf_write, "server: client %d just arrived\n", sock_id[client_sock]);
@@ -60,7 +60,7 @@ int main(int ac, char **av) {
 				break ;
 			}
 			if (FD_ISSET(sel_sock, &sfd_read) && sel_sock != sockfd) {	
-				int read_res = recv(sel_sock, buf_read, 42*4242, 0);
+				int read_res = recv(sel_sock, buf_read, 42*4056, 0);
 				if (read_res <= 0) {									// если кто-то ушел
 					sprintf(buf_write, "server: client %d just left\n", sock_id[sel_sock]);
 					send_all(sel_sock);
@@ -71,7 +71,7 @@ int main(int ac, char **av) {
 				else {
 					for (int i = 0, j = 0; i < read_res; i++, j++) {	// если кто-то написал
 						buf_str[j] = buf_read[i];
-						if (buf_str[j] == '\n') {
+						if (buf_str[j] == '\n' || j == read_res - 1) {
 							buf_str[j] = '\0';
 							sprintf(buf_write, "client %d: %s\n", sock_id[sel_sock], buf_str);
 							send_all(sel_sock);
